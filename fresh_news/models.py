@@ -5,6 +5,7 @@ class News(models.Model):
     title = models.CharField(max_length=255)
     text = models.TextField()
     publish_date = models.DateTimeField(auto_now_add=True)
+    image_url = models.URLField(blank=True, null=True)
     from_source = models.URLField(blank=True, null=True)
 
     class Meta:
