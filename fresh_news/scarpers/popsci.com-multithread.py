@@ -22,7 +22,7 @@ def parse_link(link, file_address):
                 all_unique_links.remove(link)
                 file.seek(0)
                 file.truncate()
-                file.write('\n'.join(all_unique_links))
+                file.write("\n".join(all_unique_links))
         news = News.objects.create(
             title=title,
             text=content,

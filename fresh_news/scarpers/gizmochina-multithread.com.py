@@ -18,9 +18,11 @@ def parse_link(link, file_address):
         html = driver.page_source
         soup = BeautifulSoup(html, "html.parser")
         title = soup.find("h1").get_text()
-        content = soup.find(
-            "div", class_="td-post-content tagdiv-type"
-        ).get_text().split("RELATED")[0]
+        content = (
+            soup.find("div", class_="td-post-content tagdiv-type")
+            .get_text()
+            .split("RELATED")[0]
+        )
         image_url = soup.find("figure").find("img")["src"]
         print(title)
         print(content)
@@ -30,12 +32,9 @@ def parse_link(link, file_address):
             all_unique_links.remove(link)
             file.seek(0)
             file.truncate()
-            file.write('\n'.join(all_unique_links))
+            file.write("\n".join(all_unique_links))
         news = News.objects.create(
-            title=title,
-            text=content,
-            from_source=link,
-            image_url=image_url
+            title=title, text=content, from_source=link, image_url=image_url
         )
     except Exception as e:
         print(f"Error parsing link {link}: {str(e)}")
