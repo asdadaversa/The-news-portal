@@ -1,11 +1,6 @@
-import os
-import django
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'news_portal_service.settings')
-django.setup()
-
 import requests
-from concurrent.futures import ThreadPoolExecutor
-import concurrent.futures
+
+import concurrent
 from bs4 import BeautifulSoup
 
 from fresh_news.models import News
@@ -43,7 +38,10 @@ def parse_gizmochina_page(file_address: str):
         all_unique_links = [row.strip() for row in file]
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-            futures = [executor.submit(parse_link, link, file_address) for link in all_unique_links]
+            futures = [
+                executor.submit(parse_link, link, file_address)
+                for link in all_unique_links
+            ]
 
 
 parse_gizmochina_page("popsci.com.txt")

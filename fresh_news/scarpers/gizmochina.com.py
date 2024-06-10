@@ -1,9 +1,3 @@
-import os
-import django
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'news_portal_service.settings')
-django.setup()
-
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -24,7 +18,10 @@ def parse_gizmochina_links(base_url: str, year: str):
     total_pages = soup.find("span", class_="pages").get_text().split(" ")[-1]
     print(total_pages)
 
-    page_urls = [base_url + str(page_number) for page_number in range(1, int(total_pages) + 1)]
+    page_urls = [
+        base_url + str(page_number)
+        for page_number in range(1, int(total_pages) + 1)
+    ]
 
     for url in page_urls:
         try:
@@ -63,7 +60,9 @@ def parse_gizmochina_page(file_address: str):
                 html = driver.page_source
                 soup = BeautifulSoup(html, "html.parser")
                 title = soup.find("h1").get_text()
-                content = soup.find("div", class_="td-post-content tagdiv-type").get_text().split("RELATED")[0]
+                content = soup.find(
+                    "div", class_="td-post-content tagdiv-type"
+                ).get_text().split("RELATED")[0]
                 image_url = soup.find("figure").find("img")["src"]
                 print(title)
                 print(content)

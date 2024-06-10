@@ -1,9 +1,7 @@
-import os
-import django
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'news_portal_service.settings')
-django.setup()
 import requests
+
 from bs4 import BeautifulSoup
+
 from fresh_news.models import News
 
 
@@ -33,10 +31,17 @@ def parse_space_com_page(file_address: str):
                 page = requests.get(link)
                 soup = BeautifulSoup(page.text, "html.parser")
                 title = soup.find("h1").get_text()
-                content = soup.find("div", class_="text-copy bodyCopy auto").find_all("p")
+
+                content = soup.find(
+                    "div", class_="text-copy bodyCopy auto"
+                ).find_all("p")
+
                 paragraphs = [p.get_text() for p in content]
                 final_content = " ".join([f"{i}\n" for i in paragraphs])
-                image_url = (soup.find('source')['srcset'] if soup.find('source') else None).split(",")[4]
+                image_url = (
+                    soup.find('source')['srcset']
+                    if soup.find('source') else None
+                ).split(",")[4]
                 print(f"now parce url: {link}")
                 print(f"title: {title}")
                 print(f"final_content: {final_content}")

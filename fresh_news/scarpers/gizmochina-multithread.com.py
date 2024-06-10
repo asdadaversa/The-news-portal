@@ -1,10 +1,5 @@
-import os
-import django
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'news_portal_service.settings')
-django.setup()
+import concurrent
 
-from concurrent.futures import ThreadPoolExecutor
-import concurrent.futures
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -23,7 +18,9 @@ def parse_link(link, file_address):
         html = driver.page_source
         soup = BeautifulSoup(html, "html.parser")
         title = soup.find("h1").get_text()
-        content = soup.find("div", class_="td-post-content tagdiv-type").get_text().split("RELATED")[0]
+        content = soup.find(
+            "div", class_="td-post-content tagdiv-type"
+        ).get_text().split("RELATED")[0]
         image_url = soup.find("figure").find("img")["src"]
         print(title)
         print(content)
@@ -50,7 +47,10 @@ def parse_gizmochina_page(file_address: str):
         all_unique_links = [row.strip() for row in file]
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-            futures = [executor.submit(parse_link, link, file_address) for link in all_unique_links]
+            futures = [
+                executor.submit(parse_link, link, file_address)
+                for link in all_unique_links
+            ]
 
 
 parse_gizmochina_page("gizmochina.com.txt")

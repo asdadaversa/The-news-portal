@@ -1,9 +1,5 @@
-import os
-import django
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'news_portal_service.settings')
-django.setup()
-
 import requests
+
 from bs4 import BeautifulSoup
 
 from fresh_news.models import News
@@ -14,7 +10,10 @@ def parse_popsci_com_links(base_url: str):
     soup = BeautifulSoup(page.text, "html.parser")
     total_pages = soup.find("title").get_text().split(" ")[-4]
     print(total_pages)
-    page_urls = [base_url + "page/" + str(page_number) for page_number in range(1, int(total_pages) + 1)]
+    page_urls = [
+        base_url + "page/" + str(page_number)
+        for page_number in range(1, int(total_pages) + 1)
+    ]
     print(page_urls)
 
     for url in page_urls:

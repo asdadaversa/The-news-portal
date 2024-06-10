@@ -18,7 +18,9 @@ def parse_9to5mac_pages(file_address: str):
                     "div", class_="container med post-content"
                 ).get_text().split("Add 9to5Mac to your Google News feed")[0]
 
-                image_url = soup.find("figure", class_="img-border featured-image").find("img")["src"]
+                image_url = soup.find(
+                    "figure", class_="img-border featured-image"
+                ).find("img")["src"]
                 print(link)
                 print(f"title: {title}")
                 print(f"content: {content}")
@@ -49,7 +51,6 @@ def parse_9to5mac_links(base_url: str, month: str):
     while current_date.date() <= today.date():
         try:
             url = base_url + current_date.strftime("%d") + "/"
-            print(f"Парсинг страниц для {current_date.strftime('%Y-%m-%d')}: {url}")
             page = requests.get(url)
             soup = BeautifulSoup(page.text, "html.parser")
             links = soup.find_all("a")
