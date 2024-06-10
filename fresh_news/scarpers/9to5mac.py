@@ -35,7 +35,7 @@ def parse_9to5mac_pages(file_address: str):
                         image_url=image_url
                 )
             except Exception as e:
-                print(f"Error saving product: {str(e)}")
+                print(f"Error saving article: {str(e)}")
                 continue
 
 
@@ -74,6 +74,5 @@ def parse_9to5mac_links(base_url: str, month: str):
             current_date += timedelta(days=1)
 
         except Exception as e:
-
-            print(f"Error saving product: {str(e)}")
+            print(f"Error parsing link: {str(e)}")
             continue

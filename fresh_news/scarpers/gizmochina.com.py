@@ -1,8 +1,5 @@
-from concurrent.futures import ThreadPoolExecutor
-
 import os
 import django
-import transaction as transaction
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'news_portal_service.settings')
 django.setup()
@@ -48,7 +45,7 @@ def parse_gizmochina_links(base_url: str, year: str):
                         print(href)
                         file.write(f"{href}\n")
         except Exception as e:
-            print(f"Error saving product: {str(e)}")
+            print(f"Error saving link: {str(e)}")
             continue
     driver.quit()
 
@@ -82,7 +79,7 @@ def parse_gizmochina_page(file_address: str):
                     image_url=image_url
                 )
             except Exception as e:
-                print(f"Error saving product: {str(e)}")
+                print(f"Error saving article: {str(e)}")
                 continue
 
 
