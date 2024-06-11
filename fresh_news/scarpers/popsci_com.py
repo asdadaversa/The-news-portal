@@ -1,3 +1,8 @@
+import os
+import django
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'news_portal_service.settings')
+django.setup()
+
 import requests
 
 from bs4 import BeautifulSoup
@@ -5,8 +10,8 @@ from bs4 import BeautifulSoup
 from fresh_news.models import News
 
 
-def parse_popsci_com_links(base_url: str):
-    page = requests.get(base_url)
+def parse_popsci_com_links(base_url: str, additional_path: str):
+    page = requests.get(base_url + additional_path)
     soup = BeautifulSoup(page.text, "html.parser")
     total_pages = soup.find("title").get_text().split(" ")[-4]
     print(total_pages)
@@ -29,8 +34,8 @@ def parse_popsci_com_links(base_url: str):
                 print(f"Now parsed page is: {url}")
                 links = soup.find_all("a", class_="card-post-title-link")
                 for link in links:
-                    if link not in existing_urls:
-                        href = link.get("href")
+                    href = link.get("href")
+                    if href not in existing_urls:
                         file.write(f"{href}\n")
                         print(href)
         except Exception as e:
@@ -38,7 +43,7 @@ def parse_popsci_com_links(base_url: str):
             continue
 
 
-parse_popsci_com_links("https://www.popsci.com/category/technology/")
+# parse_popsci_com_links("https://www.popsci.com/category/science/", "page/2/")
 
 
 def parse_popsci_page(file_address: str):
