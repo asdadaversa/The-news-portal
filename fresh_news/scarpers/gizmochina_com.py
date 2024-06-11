@@ -19,7 +19,7 @@ def parse_gizmochina_links(base_url: str, year: str):
     print(total_pages)
 
     page_urls = [
-        base_url + str(page_number) for page_number in range(1, int(total_pages) + 1)
+        base_url + "page/" + str(page_number) for page_number in range(1, int(total_pages) + 1)
     ]
 
     for url in page_urls:
@@ -37,7 +37,7 @@ def parse_gizmochina_links(base_url: str, year: str):
                 print(f"Now parsed page is: {url}")
                 for link in links:
                     href = link.a["href"]
-                    if year in href:
+                    if href not in existing_urls and year in href:
                         print(href)
                         file.write(f"{href}\n")
         except Exception as e:
@@ -81,4 +81,4 @@ def parse_gizmochina_page(file_address: str):
 
 
 # parse_gizmochina_links("https://www.gizmochina.com/2024/05/", "2024")
-parse_gizmochina_page("gizmochina.com.txt")
+# parse_gizmochina_page("gizmochina.com.txt")
