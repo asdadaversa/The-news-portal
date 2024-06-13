@@ -1,5 +1,6 @@
 import datetime
 
+from rest_framework.permissions import AllowAny
 from rest_framework import status, generics
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -7,6 +8,7 @@ from djoser.compat import get_user_email
 from django.contrib.auth import update_session_auth_hash
 from djoser import utils
 from djoser.conf import settings
+from django.utils.translation import gettext as _
 
 from djoser.views import UserViewSet
 from users.models import User
@@ -15,6 +17,7 @@ from users.serializers import UserSerializer, UpdateUserSerializer
 
 class CreateUserView(UserViewSet):
     serializer_class = UserSerializer
+    permission_classes = [AllowAny]
 
     def perform_create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -32,7 +35,7 @@ class CreateUserView(UserViewSet):
             settings.EMAIL.confirmation(self.request, context).send(to)
 
         return Response(
-            {"message": "Registration was successful. The activation link has been sent to your email."},
+            {"message": _("Registration was successful. The activation link has been sent to your email.")},
             status=status.HTTP_201_CREATED,
         )
 
@@ -46,6 +49,8 @@ class UserMeView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class UserActivationView(UserViewSet):
+    permission_classes = [AllowAny]
+
     @action(["post"], detail=False)
     def activation(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -60,7 +65,7 @@ class UserActivationView(UserViewSet):
             settings.EMAIL.confirmation(self.request, context).send(to)
 
         return Response(
-            {"message": "Account has been activated"},
+            {"message": _("Account has been activated")},
             status=status.HTTP_204_NO_CONTENT)
 
     @action(["post"], detail=False)
@@ -74,7 +79,7 @@ class UserActivationView(UserViewSet):
 
         if not user:
             return Response(
-                {"message": "User with this email does not exist."},
+                {"message": _("User with this email does not exist.")},
                 status=status.HTTP_204_NO_CONTENT
             )
 
@@ -84,7 +89,7 @@ class UserActivationView(UserViewSet):
             settings.EMAIL.activation(self.request, context).send(to)
 
         return Response(
-            {"message": "The activation link has been resent to your email."},
+            {"message": _("The activation link has been resent to your email.")},
             status=status.HTTP_204_NO_CONTENT
         )
 
@@ -108,7 +113,7 @@ class UserPasswordView(UserViewSet):
         elif settings.CREATE_SESSION_ON_LOGIN:
             update_session_auth_hash(self.request, self.request.user)
         return Response(
-            {"message": "The password was changed."},
+            {"message": _("The password was changed.")},
             status=status.HTTP_204_NO_CONTENT
         )
 
@@ -120,7 +125,7 @@ class UserPasswordView(UserViewSet):
 
         if not user:
             return Response(
-                {"message": "User with this email does not exist."},
+                {"message": _("User with this email does not exist.")},
                 status=status.HTTP_404_NOT_FOUND,
             )
         context = {"user": user}
@@ -128,7 +133,7 @@ class UserPasswordView(UserViewSet):
         settings.EMAIL.password_reset(self.request, context).send(to)
 
         return Response(
-            {"message": "The reset password link has been sent to your email."},
+            {"message": _("The reset password link has been sent to your email.")},
             status=status.HTTP_204_NO_CONTENT
         )
 
@@ -147,7 +152,7 @@ class UserPasswordView(UserViewSet):
             to = [get_user_email(serializer.user)]
             settings.EMAIL.password_changed_confirmation(self.request, context).send(to)
         return Response(
-            {"message": "Password was changed successfully."},
+            {"message": _("Password was changed successfully.")},
             status=status.HTTP_204_NO_CONTENT
         )
 
@@ -168,7 +173,7 @@ class UserUsernameView(UserViewSet):
             to = [get_user_email(user)]
             settings.EMAIL.username_changed_confirmation(self.request, context).send(to)
         return Response(
-            {"message": "The username was changed."},
+            {"message": _("The username was changed.")},
             status=status.HTTP_204_NO_CONTENT
         )
 
@@ -180,7 +185,7 @@ class UserUsernameView(UserViewSet):
 
         if not user:
             return Response(
-                {"message": "User with this email does not exist."},
+                {"message": _("User with this email does not exist.")},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
@@ -189,7 +194,7 @@ class UserUsernameView(UserViewSet):
         settings.EMAIL.username_reset(self.request, context).send(to)
 
         return Response(
-            {"message": "The reset email link has been sent to your email."},
+            {"message": _("The reset email link has been sent to your email.")},
             status=status.HTTP_204_NO_CONTENT
         )
 
@@ -209,6 +214,6 @@ class UserUsernameView(UserViewSet):
             to = [get_user_email(serializer.user)]
             settings.EMAIL.username_changed_confirmation(self.request, context).send(to)
         return Response(
-            {"message": "Username was changed successfully."},
+            {"message": _("Username was changed successfully.")},
             status=status.HTTP_204_NO_CONTENT
         )
