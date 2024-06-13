@@ -1,4 +1,4 @@
-# Created by https://www.toptal.com/developers/gitignore/api/python,pycharm,django
+"Username was changed successfully."# Created by https://www.toptal.com/developers/gitignore/api/python,pycharm,django
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,pycharm,django
 
 ### Django ###
@@ -69,7 +69,7 @@ coverage.xml
 cover/
 
 # Translations
-*.mo
+#*.mo
 
 # Django stuff:
 
