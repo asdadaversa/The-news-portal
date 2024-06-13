@@ -40,9 +40,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "users",
     "fresh_news",
     "debug_toolbar",
     "rest_framework",
+    "djoser",
 ]
 
 MIDDLEWARE = [
@@ -135,3 +137,44 @@ CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND")
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
+
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL_DEV", "admin_pes@ukr.net")
+
+EMAIL_HOST = os.environ.get("EMAIL_HOST")
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", 465))
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+EMAIL_SSL_VERIFY = True
+
+EMAIL_TIMEOUT = int(os.environ.get("EMAIL_TIMEOUT", 10))
+EMAIL_USE_SSL = os.environ.get("EMAIL_USE_SSL")
+EMAIL_SSL_KEYFILE = os.environ.get("EMAIL_SSL_KEYFILE")
+EMAIL_SSL_CERTFILE = os.environ.get("EMAIL_SSL_CERTFILE")
+
+AUTH_USER_MODEL = "users.User"
+
+
+DJOSER = {
+    "ACTIVATION_URL": "api/users/activation/{uid}/{token}",
+    "PASSWORD_RESET_CONFIRM_URL": "api/users/reset_password_confirm/{uid}/{token}",
+    "USERNAME_RESET_CONFIRM_URL": "api/users/reset_username_confirm/{uid}/{token}",
+    "USER_ID_FIELD": "id",
+    "LOGIN_FIELD": "email",
+    'USER_CREATE_PASSWORD_RETYPE': True,
+    'USER_CHANGE_PASSWORD_RETYPE': True,
+    "SEND_ACTIVATION_EMAIL": True,
+    'SEND_CONFIRMATION_EMAIL': True,
+    "PASSWORD_CHANGED_EMAIL_CONFIRMATION": True,
+    "PASSWORD_RESET_CONFIRM_RETYPE": True,
+    "USERNAME_CHANGED_EMAIL_CONFIRMATION": True,
+    "USERNAME_RESET_CONFIRM_RETYPE": True,
+    "TOKEN_MODEL": None,
+    'LOOKUP_FIELD': None,
+    "SERIALIZERS": {
+        "user": "users.serializers.UserSerializer",
+        "current_user": "users.serializers.UserSerializer",
+        "username_reset_confirm_retype": "djoser.serializers.UsernameResetConfirmRetypeSerializer"
+      },
+}
