@@ -32,3 +32,31 @@ class UserSerializer(serializers.ModelSerializer):
                 )
         else:
             return super().update(instance, validated_data)
+
+
+class UpdateUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = (
+            "id", "email", "password",  "first_name", "last_name", "is_staff"
+        )
+        read_only_fields = ("id", "is_staff", "email")
+        extra_kwargs = {"password": {"write_only": True, "min_length": 5}}
+
+    def update(self, instance, validated_data):
+        password = validated_data.pop("password", None)
+
+        if password:
+            if instance.check_password(password):
+                user = super().update(instance, validated_data)
+                return user
+            else:
+                raise ValidationError(
+                    {
+                        "message":
+                            "Please enter correct password. "
+                            "Password doesn't match stored data"
+                    }
+                )
+        else:
+            return super().update(instance, validated_data)
