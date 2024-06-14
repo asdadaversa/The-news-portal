@@ -3,7 +3,7 @@ from django.urls import path
 from users.views import UserActivationView, UserMeView, CreateUserView, UserPasswordView, UserUsernameView
 
 urlpatterns = [
-    path("", CreateUserView.as_view({"post": "perform_create"}), name="your_create_user"),
+    path("", CreateUserView.as_view({"post": "perform_create"}), name="create_user"),
     path("me/", UserMeView.as_view(), name="manage"),
 
     path("activation/<uid>/<token>/", UserActivationView.as_view({"post": "activation"}), name="user-activation"),
