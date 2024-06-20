@@ -1,5 +1,6 @@
 import datetime
 
+from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework import status, generics
 from rest_framework.decorators import action
@@ -9,6 +10,9 @@ from django.contrib.auth import update_session_auth_hash
 from djoser import utils
 from djoser.conf import settings
 from django.utils.translation import gettext as _
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from djoser.views import UserViewSet
 from users.models import User
@@ -43,6 +47,8 @@ class CreateUserView(UserViewSet):
 class UserMeView(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UpdateUserSerializer
+    authentication_classes = (JWTAuthentication,)
+    permission_classes = [IsAuthenticated]
 
     def get_object(self):
         return self.request.user
@@ -217,3 +223,17 @@ class UserUsernameView(UserViewSet):
             {"message": _("Username was changed successfully.")},
             status=status.HTTP_204_NO_CONTENT
         )
+
+
+class LogoutView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        try:
+            refresh_token = request.data["refresh"]
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+
+            return Response(status=status.HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST)

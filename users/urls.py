@@ -1,6 +1,6 @@
 from django.urls import path
 
-from users.views import UserActivationView, UserMeView, CreateUserView, UserPasswordView, UserUsernameView
+from users.views import UserActivationView, UserMeView, CreateUserView, UserPasswordView, UserUsernameView, LogoutView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -24,6 +24,7 @@ urlpatterns = [
     path("set_username/", UserUsernameView.as_view({"post": "set_username"}), name="user-set-username"),
     path("reset_username/", UserUsernameView.as_view({"post": "reset_username"}), name="user-reset-username"),
     path("reset_username_confirm/<uid>/<token>/", UserUsernameView.as_view({"post": "reset_username_confirm"}), name="user-reset-username-confirm"),
+    path("logout/", LogoutView.as_view(), name="logout")
 ]
 
 app_name = "user"
