@@ -1,0 +1,79 @@
+version: "3"
+
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    command: >
+      sh -c "python manage.py wait_for_db &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    env_file:
+      - .env
+    networks:
+      - news_portal
+
+  db:
+    image: postgres:14-alpine
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    networks:
+      - news_portal
+
+  broker:
+    image: redis:7.0.15-alpine
+    container_name: redis-news-portal
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    depends_on:
+      - db
+    networks:
+      - news_portal
+
+  celery-worker:
+    build:
+      context: .
+    image: celery-worker-news-portal
+    container_name: celery-worker-news-portal
+    volumes:
+      - .:/app/celery_worker
+    command: celery -A news_portal_service worker --loglevel=INFO
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - broker
+    networks:
+      - news_portal
+
+  celery-beat:
+    build:
+      context: .
+    image: celery-beat-news-portal
+    container_name: celery-beat-news-portal
+    volumes:
+      - .:/app/celery_beat
+    command: celery -A news_portal_service beat --loglevel=INFO
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - broker
+    networks:
+      - news_portal
+      
+volumes:
+  redis-data:
+    driver: local
+
+networks:
+  news_portal:
+    driver: bridge
