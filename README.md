@@ -20,7 +20,6 @@ Parsing news with Selenium, Beautifulsoup, requests
 - **Create User**: `POST /api/users/`
 - **Login**: `POST /api/users/token/`
 - **Login**: `POST /api/users/refresh/`
-- **Login**: `POST 
 - **Retrieve User Profile**: `GET /api/users/me/`
 - **Put User Profile**: `PUT /api/users/me/`
 - **Delete User Profile**: `DELETE /api/users/me/`
