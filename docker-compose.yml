@@ -11,12 +11,11 @@ services:
     command: >
       sh -c "python manage.py wait_for_db &&
              python manage.py migrate &&
-             python manage.py loaddata data.json &&
              python manage.py runserver 0.0.0.0:8000"
     env_file:
       - .env
     networks:
-      - library_library
+      - news_portal
 
   db:
     image: postgres:14-alpine
@@ -25,11 +24,11 @@ services:
     env_file:
       - .env
     networks:
-      - library_library
+      - news_portal
 
   broker:
     image: redis:7.0.15-alpine
-    container_name: redis-library
+    container_name: redis-news-portal
     ports:
       - "6379:6379"
     volumes:
@@ -37,38 +36,44 @@ services:
     depends_on:
       - db
     networks:
-      - library_library
+      - news_portal
 
   celery-worker:
     build:
       context: .
-    image: celery-worker-library
-    container_name: celery-worker-library
+    image: celery-worker-news-portal
+    container_name: celery-worker-news-portal
     volumes:
       - .:/app/celery_worker
-    command: celery -A library_service worker --loglevel=INFO
+    command: celery -A news_portal_service worker --loglevel=INFO
     env_file:
       - .env
     depends_on:
       - db
       - broker
     networks:
-      - library_library
+      - news_portal
 
+  celery-beat:
+    build:
+      context: .
+    image: celery-beat-news-portal
+    container_name: celery-beat-news-portal
+    volumes:
+      - .:/app/celery_beat
+    command: celery -A news_portal_service beat --loglevel=INFO
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - broker
+    networks:
+      - news_portal
+      
 volumes:
   redis-data:
     driver: local
 
 networks:
-  library_library:
+  news_portal:
     driver: bridge
-
-
-
-#volumes:
-#  redis-data:
-#    driver: local
-#
-#networks:
-#  library:
-#    driver: bridge
