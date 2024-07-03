@@ -23,7 +23,7 @@ Parsing news with Selenium, Beautifulsoup, requests
 - **Retrieve User Profile**: `GET /api/users/me/`
 - **Put User Profile**: `PUT /api/users/me/`
 - **Delete User Profile**: `DELETE /api/users/me/`
-- 
+  
 - **Activation**: `POST api/users/activation/{uid}/{token}/`
 - **Resend Activation**: `POST api/users/resend_activation/`
 - **Set Password**: `POST api/users/set_password/`
